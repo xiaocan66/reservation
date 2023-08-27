@@ -1,0 +1,83 @@
+syntax ="proto3";
+package reservstion;
+
+
+enum ReservationStatus {
+    STATUS_UNKNOWN = 0;
+    STATUS_PENDING = 1;
+    STATUS_CONFIRMED = 2;
+    STATUS_CANCELED = 3;
+}
+enum ReservationUpdateType {
+    TYPE_UNKNOWN = 0;
+    TYPE_CREATE = 1;
+    TYPE_UPDATE = 2;
+    TYPE_CANCEL = 3;
+}
+message Reservation {
+    string id = 1;
+    string user_id = 2;
+
+    string resource_id = 3;
+    int64 start_time = 4;
+    int64 end_time = 5;
+
+    int64 create_time = 6;
+    int64 update_time = 7;
+    int64 cancel_time = 8;
+    ReservationStatus status = 9;
+    // 备注信息
+    string note = 10;
+}
+message ReservationRequest {
+    Reservation reservation = 1;
+}
+message ReservationResponse {
+    Reservation reservation = 1;
+}
+message UpdateRequest {
+    string note = 1;
+}
+message UpdateResponse {
+    Reservation reservation = 1;
+}
+message ConfirmRequest {
+   string id = 1;
+}
+message ConfirmResponse {
+   Reservation reservation = 1;
+}
+message CancelRequest {
+   string id = 1;
+}
+message CancelResponse {
+   Reservation reservation = 1;
+}
+message GetRequest {
+   string id = 1;
+}
+message GetResponse {
+   Reservation reservation = 1;
+}
+message QueryRequest {
+    string user_id = 1;
+    string resource_id = 2;
+    int64 start_time = 3;
+    int64 end_time = 4;
+    // 使用status 去过滤 如果是UNKNOWN 则不过滤
+    ReservationStatus status = 5;
+}
+message ListRequest {}
+message ListResponse {
+    int64 op = 1;
+    Reservation reservations = 2;
+}
+service ReservationService {
+    rpc reserve(ReservationRequest) returns (ReservationResponse) {}
+    rpc update(UpdateRequest) returns (UpdateResponse) {}
+    rpc confirm(ConfirmRequest) returns (ConfirmResponse) {}
+    rpc cancel(CancelRequest) returns (CancelResponse) {}
+    rpc get(GetRequest) returns (GetResponse) {}
+    rpc query(QueryRequest) returns (ListResponse) {}
+    rpc listen(ListRequest) returns (stream Reservation ) {}
+}
